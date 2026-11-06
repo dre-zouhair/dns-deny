@@ -1,0 +1,16 @@
+/target
+dns-server-*.md
+checklists/phase-*.md
+/ui/node_modules
+logs.db-shm
+logs.db-wal
+logs.db
+state.db
+state.db-journal
+state.db-wal
+state.db-shm
+deploy/staging_deb/*
+deploy/staging/*
+.env
+deploy/.env
+/blocklist_cache/

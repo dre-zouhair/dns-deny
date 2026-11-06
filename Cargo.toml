@@ -1,0 +1,36 @@
+[workspace]
+members = []
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.90"
+
+[workspace.dependencies]
+async-trait = "0.1.89"
+hickory-server = { version = "0.26.2", features = ["resolver"] }
+hickory-proto = "0.26.3"
+hickory-resolver = { version = "0.26.2", features = ["tokio", "tls-ring", "https-ring", "dnssec-ring", "webpki-roots", "recursor"] }
+tokio = { version = "1.54.1", features = ["full"] } # standard stable tokio
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+socket2 = "0.6.5"
+dashmap = "6.2.1"
+moka = { version = "0.12.15", features = ["future", "sync"] }
+ahash = "0.8"
+regex = "1.11.1"
+ipnet = "2.12"
+rusqlite = { version = "0.32.1", features = ["bundled"] }
+arc-swap = "1.7.1"
+idna = "1.0.3"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "charset"] }
+tokio-cron-scheduler = "0.13"
+chrono = "0.4"
+axum = "0.8.1" # Using compatible 0.8 version
+serde_json = "1.0"
+tower-http = { version = "0.6.2", features = ["cors", "trace", "limit"] }
+tokio-stream = { version = "0.1", features = ["sync"] } # helpful for SSE / streams
+bcrypt = "0.15"
+
