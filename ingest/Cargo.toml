@@ -1,0 +1,13 @@
+[package]
+name = "ingest"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+rusqlite = { workspace = true }
+ahash = { workspace = true }
+serde = { workspace = true }
+regex = { workspace = true }
+rule_types = { path = "../rule_types" }
+tempfile = "3"
