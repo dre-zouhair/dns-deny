@@ -1,5 +1,10 @@
+[package]
+name = "dns-deny"
+version = "0.1.0"
+edition = "2024"
+
 [workspace]
-members = ["rule_types", "filter", "ingest", "logger", "scoring", "core", "api"]
+members = ["core", "filter", "ingest", "logger", "api", "scoring", "rule_types"]
 resolver = "2"
 
 [workspace.package]
@@ -34,3 +39,26 @@ tower-http = { version = "0.6.2", features = ["cors", "trace", "limit"] }
 tokio-stream = { version = "0.1", features = ["sync"] } # helpful for SSE / streams
 bcrypt = "0.15"
 
+[features]
+default = ["feat-api", "feat-json-api", "feat-web-ui"]
+# Admin HTTP server. It needs feat-web-ui (dashboard) and/or feat-json-api
+# (/api/v1); enabling either one enables the server.
+feat-api = ["dep:api"]
+feat-json-api = ["feat-api", "api/feat-json-api"]
+feat-web-ui = ["feat-api", "api/feat-web-ui"]
+feat-scoring = ["dep:scoring", "api/feat-scoring", "core_dns/feat-scoring"]
+
+[dependencies]
+core_dns = { path = "core" }
+filter = { path = "filter" }
+logger = { path = "logger" }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+arc-swap = { workspace = true }
+hickory-resolver = { workspace = true }
+api = { path = "api", optional = true, default-features = false }
+scoring = { path = "scoring", optional = true }
+
+[dev-dependencies]
+tempfile = "3"
