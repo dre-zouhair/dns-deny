@@ -1,0 +1,58 @@
+[Unit]
+Description=dns-deny — DNS filtering and blocking server
+Documentation=https://github.com/dre-zouhair/dns-deny
+After=network-online.target
+Wants=network-online.target
+# Restart if the process exits unexpectedly (not on clean stop)
+StartLimitIntervalSec=60
+StartLimitBurst=5
+
+[Service]
+Type=exec
+# Run as a dedicated non-privileged user
+User=dns-deny
+Group=dns-deny
+# The compiled binary location
+ExecStart=/usr/local/bin/dns-deny
+# Allow dns-deny to bind to port 53 without running as root
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+# Config path override (defaults to config/default.toml in working directory)
+Environment=DNS_CONFIG=/etc/dns-deny/config.toml
+Environment=DNS_STATE_DB=/var/lib/dns-deny/state.db
+WorkingDirectory=/var/lib/dns-deny
+UMask=0077
+# Restart policy
+Restart=on-failure
+RestartSec=5s
+# Logging level — override to "debug" temporarily for troubleshooting
+# Environment=RUST_LOG=info
+Environment=RUST_LOG=dns_deny=info,core_dns=info,filter=warn,logger=info,api=info,ingest=warn
+# Watchdog — requires sd_notify heartbeats (enable if sd_notify feature is active)
+# WatchdogSec=30s
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+# Runtime configuration changes are persisted exclusively to SQLite state.db
+# in /var/lib/dns-deny (managed via StateDirectory=dns-deny).
+# /etc/dns-deny/config.toml is read-only seed configuration.
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectControlGroups=true
+# Neighbor discovery uses read-only routing netlink for ARP and IPv6 NDP.
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallFilter=@system-service
+# State and log directories (created automatically by systemd)
+StateDirectory=dns-deny
+LogsDirectory=dns-deny
+# Resource limits — prevent OOM from runaway cache growth
+MemoryMax=512M
+TasksMax=512
+
+[Install]
+WantedBy=multi-user.target
