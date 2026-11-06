@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block body %}
+<a class="skip-link" href="#main-content">Skip to dashboard content</a>
+<div id="app-shell" class="app-shell" data-signals="{collapsed: false}" data-class:sidebar-collapsed="$collapsed">
+  <nav id="sidebar-navigation" class="sidebar" aria-label="Main navigation">
+    <div class="sidebar-header"><a class="sidebar-brand" href="/"><span class="sidebar-brand-icon"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></span><span>dns<span class="brand-divider">—</span>deny<span class="brand-period">.</span></span></a><button class="btn btn-ghost btn-sm btn-icon-only" type="button" aria-label="Collapse sidebar" aria-controls="sidebar-navigation" aria-expanded="true" data-attr:aria-expanded="String(!$collapsed)" data-attr:aria-label="$collapsed ? 'Expand sidebar' : 'Collapse sidebar'" data-on:click="$collapsed = !$collapsed"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button></div>
+    {{ protection|safe }}
+    <div class="sidebar-nav">
+    {% for key, label, href in [('overview','Dashboard','/'),('queries','Query Log','/livetail.html'),('lists','Rule Manager','/lists.html'),('services','Threat Defense','/services.html'),('network','Network & DNS','/network.html'),('doh','Upstream Engine','/doh.html'),('config','System & Tools','/config.html')] %}
+      <a href="{{ href }}" title="{{ label }}" aria-label="{{ label }}" class="sidebar-link {% if page == key %}active{% endif %}" {% if page == key %}aria-current="page"{% endif %}>
+        {% if key == 'overview' %}
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        {% elif key == 'queries' %}
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        {% elif key == 'lists' %}
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        {% elif key == 'services' %}
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 2-2 10h4l-2 10 9-13h-5l2-7z"/></svg>
+        {% elif key == 'network' %}
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        {% elif key == 'doh' %}
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="8" x="2" y="2" rx="2" ry="2"/><rect width="20" height="8" x="2" y="14" rx="2" ry="2"/><line x1="6" x2="6.01" y1="6" y2="6"/><line x1="6" x2="6.01" y1="18" y2="18"/></svg>
+        {% elif key == 'config' %}
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        {% endif %}
+        <span>{{ label }}</span>
+      </a>
+    {% endfor %}
+    </div>
+    <div class="sidebar-footer">
+      <button type="button" class="btn btn-ghost" data-theme-toggle title="Toggle Theme" aria-label="Toggle Theme"><svg class="theme-icon-light" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" x2="12" y1="1" y2="3"/><line x1="12" x2="12" y1="21" y2="23"/><line x1="4.22" x2="5.64" y1="4.22" y2="5.64"/><line x1="18.36" x2="19.78" y1="18.36" y2="19.78"/><line x1="1" x2="3" y1="12" y2="12"/><line x1="21" x2="23" y1="12" y2="12"/><line x1="4.22" x2="5.64" y1="19.78" y2="18.36"/><line x1="18.36" x2="19.78" y1="5.64" y2="4.22"/></svg><svg class="theme-icon-dark" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/></svg><span>Toggle Theme</span></button>
+      <form method="post" action="/ui/auth/logout"><button id="logout-btn" class="btn btn-ghost" type="submit" title="Sign Out" aria-label="Sign Out"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg><span>Sign Out</span></button></form>
+    </div>
+  </nav>
+  <main id="main-content" class="main-content" tabindex="-1">
+    <details class="mobile-menu card"><summary>dns-deny <span class="mobile-menu-label">Navigation</span></summary><nav aria-label="Mobile navigation">
+      {% for label, href in [('Dashboard','/'),('Query Log','/livetail.html'),('Rule Manager','/lists.html'),('Threat Defense','/services.html'),('Network & DNS','/network.html'),('Upstream Engine','/doh.html'),('System & Tools','/config.html')] %}<a class="sidebar-link {% if href == path %}active{% endif %}" href="{{ href }}" {% if href == path %}aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}
+      <button type="button" class="btn btn-ghost" data-theme-toggle>Toggle Theme</button>
+      <form method="post" action="/ui/auth/logout"><button class="btn btn-ghost" type="submit">Sign Out</button></form>
+    </nav></details>
+    <div class="view active" id="page-content">
+      <header class="page-header"><div><h1>{{ title }}</h1><p class="page-description">{{ description }}</p></div></header>
+      <div id="ui-error" class="rules-error" role="alert" hidden></div>
+      {% if tabs %}<nav class="tab-nav" aria-label="Page sections">{% for key, label in tabs %}<a class="tab-pill {% if tab == key %}active{% endif %}" href="{{ path }}?tab={{ key }}" {% if tab == key %}aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}</nav>{% endif %}
+      {% for item in sections %}{{ overrides[item.name]|default(item.html)|safe }}{% endfor %}
+    </div>
+  </main>
+</div>
+{% endblock %}

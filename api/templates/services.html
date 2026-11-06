@@ -1,0 +1,24 @@
+{% import 'forms.html' as f with context %}
+<section id="section-services-{{ section }}" class="ui-section">
+{{ f.feedback() }}
+{% if section == 'apps' %}
+{{ f.search('services','apps','services','Search apps…') }}
+<div class="services-layout" style="display:grid;gap:24px;align-items:start"><div class="ui-card-grid">
+{% for service in services %}<article class="card"><strong>{{ service.name }}</strong><p class="settings-note">{{ service.description }}</p><span class="badge {% if pauses[service.id] %}badge-warning{% elif service.blocked %}badge-danger{% else %}badge-success{% endif %}">{% if pauses[service.id] %}Paused{% elif service.blocked %}Blocked{% else %}Allowed{% endif %}</span>
+{% if service.wildcards %}<p class="mono-cell">{{ service.wildcards|join(', ') }}</p>{% endif %}
+{% call f.form('service-' ~ loop.index, 'services', 'apps') %}<input type="hidden" name="id" value="{{ service.id }}"><label><input type="checkbox" name="blocked" {% if service.blocked %}checked{% endif %}> Blocked</label>{{ f.submit('Apply','toggle','secondary') }}{% endcall %}
+{% if service.blocked or pauses[service.id] %}{% call f.form('pause-service-' ~ loop.index,'services','apps') %}<input type="hidden" name="id" value="{{ service.id }}"><input type="hidden" name="scope" value="service">{{ f.submit('Resume' if pauses[service.id] else 'Pause', 'resume' if pauses[service.id] else 'pause','ghost') }}{% endcall %}{% endif %}
+{% if service.is_custom %}{% call f.form('delete-service-' ~ loop.index,'services','apps',false,'Delete this custom app?') %}<input type="hidden" name="id" value="{{ service.id }}">{{ f.submit('Delete','delete','ghost') }}{% endcall %}{% endif %}</article>{% else %}<p>No matching apps.</p>{% endfor %}
+</div><div class="card"><h2 class="card-title">Create Custom App</h2>{% call f.form('custom-app-form','services','apps',true) %}{{ f.input('name','App Name',form.name|default('')) }}{{ f.input('description','Description',form.description|default(''),'text',false) }}{{ f.input('wildcards','Wildcard Domains (comma separated)',form.wildcards|default('')) }}{{ f.submit('Create Custom App','add') }}{% endcall %}</div></div>
+{% elif section == 'logs' %}
+<div class="card"><h2 class="card-title">Search Query Logs</h2>{{ f.search('services','logs','services','Find domains for custom apps…') }}{% for domain in domains|default([]) %}<div class="ui-form-row">{{ f.copy(domain) }}<button class="btn btn-secondary btn-sm" type="button" data-add-domain="{{ domain }}">Add to custom app</button></div>{% else %}{% if query %}<p>No matching domains found.</p>{% endif %}{% endfor %}</div>
+{% elif section == 'detection' %}
+<div class="card"><h2 class="card-title">Detection Settings</h2>{% for field,label,enabled in [('auto','Malware Auto-Block',auto),('smart','Smart IP Blocking',smart)] %}{% call f.form('detection-' ~ field, 'services', 'detection') %}<input type="hidden" name="field" value="{{ field }}"><label><input name="enabled" type="checkbox" {% if enabled %}checked{% endif %}> {{ label }}</label>{{ f.submit('Save Setting') }}{% endcall %}{% endfor %}</div>
+{% elif section == 'autoblock' %}
+<div class="card"><h2 class="card-title">Auto-Blocked Domains ({{ data.count|number }})</h2>{% for domain in data.domains %}<p>{{ f.copy(domain) }}</p>{% else %}<p>No malicious domains discovered yet.</p>{% endfor %}<a href="/services.html?tab=autoblock" class="btn btn-secondary">Refresh</a></div>
+{% elif section == 'ips' %}
+<div class="card"><h2 class="card-title">Tracked Malicious IPs ({{ total|number }})</h2>{{ f.search('services','ips','smartip','Search tracked IPs…') }}{% call f.form('add-ip-form','services','ips',true) %}<div class="ui-form-row">{{ f.input('ip','IP Address',form.ip|default('') if form_id == 'add-ip-form' else '') }}{{ f.submit('Block IP','add') }}</div>{% endcall %}<table class="table"><thead><tr><th>IP Address</th><th>Action</th></tr></thead><tbody>{% for ip in ips %}<tr><td>{{ f.copy(ip) }}</td><td>{% call f.form('delete-ip-' ~ loop.index,'services','ips') %}<input name="ip" type="hidden" value="{{ ip }}">{{ f.submit('Delete','delete','ghost') }}{% endcall %}</td></tr>{% else %}<tr><td colspan="2" class="rules-empty">No matching IPs.</td></tr>{% endfor %}</tbody></table></div>
+{% else %}
+<div class="card"><h2 class="card-title">SafeSearch Network Enforcement</h2><p>Force strict SafeSearch responses for supported search engines.</p>{% call f.form('safesearch-form','services','safesearch',true) %}<label><input name="enabled" type="checkbox" {% if enabled %}checked{% endif %}> Enforce SafeSearch Network-Wide</label>{{ f.submit('Save SafeSearch Settings') }}{% endcall %}</div>
+{% endif %}
+</section>

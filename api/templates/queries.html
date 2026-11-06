@@ -1,0 +1,29 @@
+{% import 'forms.html' as f with context %}
+<section id="section-queries-feed" class="ui-section" data-stream-url="{{ stream_url }}" data-signals="{live: {{ 'true' if mode == 'live' else 'false' }}, stream_status: 'connecting…', stream_tick: 0}">
+{{ f.feedback() }}
+<div class="ui-form-row">
+  {% if mode != 'history' %}
+  <span role="status" data-text="$live ? $stream_status : 'paused'">{% if mode == 'live' %}Connecting…{% else %}Paused{% endif %}</span>
+  <button class="btn btn-danger" type="button" data-show="$live" data-on:click="$live = false; @get(el.closest('section').dataset.streamUrl, {headers: {'X-Stop-Live': 'true'}, requestCancellation: 'cleanup', retry: 'never'})">Stop Live</button>
+  <button class="btn btn-primary" type="button" data-show="!$live" data-on:click="$live = true; @get(el.closest('section').dataset.streamUrl, {requestCancellation: 'cleanup'})">Start Live</button>
+  {% else %}<a class="btn btn-primary" href="/livetail.html?mode=live&amp;{{ params }}">Start Live</a>{% endif %}
+  <a class="btn btn-ghost" href="/livetail.html?mode=paused">Clear</a>
+  <a class="btn btn-secondary" href="/ui/queries/export?{{ params }}">Export CSV</a>
+</div>
+<form class="log-filter-bar" method="get" action="/livetail.html" data-on:submit="@get('/ui/section/queries/feed', {contentType:'form'})">
+  <label class="log-filter-group" style="flex:2">Search Domain<input class="input" name="q" value="{{ form.q|default('') }}"></label>
+  <label class="log-filter-group">Verdict<select class="input" name="verdict"><option value="">All Queries</option>{% for key,label in [('Block','Blocked'),('Pass','Allowed')] %}<option value="{{ key }}" {% if form.verdict == key %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  <label class="log-filter-group">Client<select name="client" class="input"><option value="">All Clients</option>{% for client in clients %}<option value="{{ client.ip }}" {% if form.client == client.ip %}selected{% endif %}>{{ client.ip }}{% if client.name %} ({{ client.name }}){% endif %}</option>{% endfor %}</select></label>
+  <button class="btn btn-secondary" name="mode" value="history" type="submit">Search History</button>
+  <button class="btn btn-ghost" name="mode" value="live" type="submit">Apply Live Filters</button>
+  <a href="/livetail.html" class="btn btn-ghost">Reset</a>
+</form>
+<p id="query-warning" class="settings-note"></p>
+{% if mode == 'history' %}<p>{{ count }} queries on page {{ page_number }}.</p>{% else %}<p data-text="($stream_tick, document.getElementById('query-rows').childElementCount) + ' displayed (maximum 500)'">0 displayed (maximum 500)</p>{% endif %}
+<div class="card query-log-card"><div class="query-log-scroll" tabindex="0" role="region" aria-label="DNS query log; scroll horizontally to see all columns"><div class="query-log-table">
+<div class="tail-row tail-header"><span>Time (UTC)</span><span>Client</span><span>Domain</span><span>Type</span><span>Verdict</span><span>Latency</span></div>
+<div id="query-rows" class="tail-feed" data-ignore>{{ rows|safe }}</div>
+</div></div></div>
+{% if mode == 'live' %}<div id="query-stream" data-init="@get(el.closest('section').dataset.streamUrl, {requestCancellation:'cleanup'})"></div>{% endif %}
+{% if mode == 'history' %}<nav class="upstream-pagination" aria-label="History pagination">{% if page_number > 1 %}<a class="btn btn-secondary" href="/livetail.html?mode=history&amp;page={{ page_number - 1 }}&amp;{{ params }}">← Previous</a>{% endif %}<span>Page {{ page_number }}</span>{% if count == 100 %}<a class="btn btn-secondary" href="/livetail.html?mode=history&amp;page={{ page_number + 1 }}&amp;{{ params }}">Next →</a>{% endif %}</nav>{% endif %}
+</section>

@@ -1,0 +1,38 @@
+{% import 'forms.html' as f with context %}
+<section id="section-{{ page }}-{{ section }}" class="ui-section">
+{{ f.feedback() }}
+{% if section in ['main','primary'] %}
+<div class="card"><h2 class="card-title">Primary Upstream Resolvers</h2><p class="settings-note">Saved resolver and primary upstream changes apply after a server restart.</p>
+{% call f.form('upstreams-form','config' if section == 'main' else 'doh',section,true) %}
+<div class="ui-form-row">{{ f.submit('Save Configuration' if section == 'main' else 'Save Upstreams') }}{{ f.submit('Reset Changes','reset','ghost') }}</div>
+<input type="hidden" name="_upstreams_present" value="1"><input type="hidden" name="editor_page" value="{{ editor_page }}">
+{% if section == 'main' %}<label class="form-group"><span><input type="checkbox" name="recursive_resolver_enabled" {% if recursive %}checked{% endif %}> Enable Recursive Resolver (iterative resolution from root anchors)</span></label>{% endif %}
+<div id="upstreams-list">{% for upstream in upstreams %}<div class="upstream-row" {% if (loop.index0 // 4) + 1 != editor_page %}hidden{% endif %}>
+<input name="address" class="input mono-cell" value="{{ upstream.address }}" placeholder="IP Address:Port" aria-label="Upstream {{ loop.index }} address">
+<select name="protocol" class="input" aria-label="Upstream {{ loop.index }} protocol">{% for protocol in ['udp','tcp','dot','doh'] %}<option {% if upstream.protocol == protocol %}selected{% endif %}>{{ protocol }}</option>{% endfor %}</select>
+<input name="tls_sni" class="input mono-cell" value="{{ upstream.tls_sni or '' }}" placeholder="TLS SNI (DoT/DoH)" aria-label="Upstream {{ loop.index }} TLS SNI">
+<input name="doh_path" class="input mono-cell" value="{{ upstream.doh_path or '' }}" placeholder="DoH path (optional)" aria-label="Upstream {{ loop.index }} DoH path">
+<button class="btn btn-ghost" type="submit" name="intent" value="remove:{{ loop.index0 }}" aria-label="Remove upstream {{ loop.index }}">×</button>
+</div>{% else %}<p>No upstreams configured. Add one before saving.</p>{% endfor %}</div>
+<div class="ui-form-row">{{ f.submit('+ Add Upstream','add','secondary') }}{% if pages > 1 %}{% if editor_page > 1 %}{{ f.submit('Previous','previous','ghost') }}{% endif %}<span>Page {{ editor_page }} of {{ pages }}</span>{% if editor_page < pages %}{{ f.submit('Next','next','ghost') }}{% endif %}{% endif %}</div>
+{% endcall %}</div>
+{% elif section == 'pause' %}
+<div class="card"><h2 class="card-title">Protection Pause Default Duration</h2>{% call f.form('pause-form','config','pause',true) %}<div class="ui-form-row">{{ f.input('seconds','Duration (seconds)',seconds,'number') }}{{ f.submit('Save Pause Duration') }}</div>{% endcall %}</div>
+{% elif section == 'cache' %}
+<div class="card"><h2 class="card-title">Cache Invalidation & Maintenance</h2><div class="ui-card-grid">{% for label,entries in [('L1 In-Memory Cache',stats.l1_entries),('L2 Response Cache',stats.l2_entries),('Filter Verdict Cache',stats.filter_cache_entries)] %}<div><h3>{{ label }}</h3><strong class="stat-value">{{ entries|number }}</strong><p>entries</p></div>{% endfor %}</div>{% call f.form('cache-form','config','cache',false,'Purge the response and filter caches? Cached queries will need to resolve again.') %}{{ f.submit('Invalidate Caches') }}{% endcall %}</div>
+{% elif section == 'startup' %}
+<div class="card"><h2 class="card-title">Startup Settings (Read Only)</h2><p class="settings-note">These settings have no live write endpoint. They are displayed from the running configuration.</p><dl class="ui-startup">{% for item in startup %}<dt>{{ item.name }}</dt><dd>{{ item.value }}</dd>{% endfor %}</dl></div>
+{% elif section == 'security' %}
+<div class="card"><h2 class="card-title">Change Admin Password / API Key</h2><p class="settings-note">Changing this credential revokes existing sessions. This browser receives a new session after a successful save.</p>{% call f.form('password-form','config','security',true) %}<div class="ui-form-grid"><label class="form-group">Current Password<input class="input" name="current_password" type="password" required autocomplete="current-password"></label><label class="form-group">New Password<input class="input" name="new_password" type="password" required minlength="8" autocomplete="new-password"></label><label class="form-group">Confirm New Password<input class="input" name="confirm_password" type="password" required minlength="8" autocomplete="new-password"></label></div>{{ f.submit('Update Admin Password') }}{% endcall %}</div>
+{% elif section == 'api-token' %}
+<div class="card"><h2 class="card-title">JSON API Token</h2><p class="settings-note">Integrations call <code>/api/v1/*</code> with <code>Authorization: Bearer &lt;token&gt;</code>. Once a token exists, the admin password no longer authenticates API requests, and changing the password does not affect the token. Only a SHA-256 digest of the token is stored.</p>
+{% if secret %}<div class="ui-notice" role="status"><p>Copy this token now. It is not stored and will not be shown again.</p>{{ f.copy(secret) }}</div>{% endif %}
+<p>{% if configured %}<span class="badge badge-success">Token active</span>{% else %}<span class="badge badge-secondary">No token</span> The JSON API accepts the admin password until a token is generated.{% endif %}</p>
+<div class="ui-form-row">{% call f.form('api-token-generate','config','api-token',false,'Generate a new API token? Integrations using the current token stop working.' if configured else '') %}{{ f.submit('Generate New Token' if configured else 'Generate Token','generate') }}{% endcall %}
+{% if configured %}{% call f.form('api-token-revoke','config','api-token',false,'Revoke the API token? The JSON API will accept the admin password again.') %}{{ f.submit('Revoke Token','revoke','ghost') }}{% endcall %}{% endif %}</div></div>
+{% elif section == 'diagnostics' %}
+<div class="card"><h2 class="card-title">Overall Engine Status: {{ data.status|upper }}</h2><a class="btn btn-secondary" href="/config.html?tab=diagnostics">Run Diagnostic Probe</a></div><div class="ui-card-grid">{% for component in data.components %}<div class="card"><h3>{{ component.name }}</h3><span class="badge {% if component.status == 'pass' %}badge-success{% elif component.status == 'warn' %}badge-warning{% elif component.status == 'fail' %}badge-danger{% else %}badge-secondary{% endif %}">{{ component.status|upper }}</span><p>{{ component.message }}</p>{% for key,value in component.details|items %}<div class="diagnostic-detail"><span>{{ key }}</span><span class="mono-cell">{% if value is mapping or (value is sequence and value is not string) %}{{ value|tojson }}{% else %}{{ value }}{% endif %}</span></div>{% endfor %}</div>{% endfor %}</div>
+{% else %}
+<div class="card"><h2 class="card-title">Live Domain Resolution Probe</h2><form method="get" action="/config.html" data-on:submit="@get('/ui/section/config/probe', {contentType:'form'})"><input type="hidden" name="tab" value="diagnostics"><div class="ui-form-row">{{ f.input('domain','Domain',form.domain|default('')) }}<button class="btn btn-secondary" type="submit">Probe Domain</button></div></form>{% if result %}<div class="probe-result"><strong>{{ result.domain }}</strong><span class="badge {% if result.verdict == 'blocked' %}badge-danger{% else %}badge-success{% endif %}">{{ result.verdict|upper }}</span><p>{{ result.reason }}</p><p>Round-trip latency: {{ elapsed }} ms</p></div>{% endif %}</div>
+{% endif %}
+</section>

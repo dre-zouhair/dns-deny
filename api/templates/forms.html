@@ -1,0 +1,24 @@
+{% macro form(id, page, section, preserve=false, confirm='') %}
+<form id="{{ id }}" method="post" action="/ui/action/{{ page }}/{{ section }}"
+  {% if preserve %}data-ignore-morph{% endif %}
+  data-indicator="busy_{{ id|replace('-', '_') }}"
+  data-attr:inert="$busy_{{ id|replace('-', '_') }}"
+  data-attr:aria-busy="String($busy_{{ id|replace('-', '_') }})"
+  data-on:submit="{% if confirm %}if (!confirm(el.dataset.confirm)) return; {% endif %}{% if preserve %}el.removeAttribute('data-ignore-morph'); {% endif %}@post(el.action, {contentType: 'form', retry: 'never'}){% if preserve %}.finally(() =&gt; el.setAttribute('data-ignore-morph', '')){% endif %}"
+  {% if confirm %}data-confirm="{{ confirm }}"{% endif %}>
+  <input type="hidden" name="_form" value="{{ id }}">
+  <input type="hidden" name="_version" value="{{ form_version if form_id == id else 'initial' }}">
+  <div class="ui-form-fields" id="{{ id }}-fields-{{ form_version if form_id == id else 'initial' }}">{{ caller() }}</div>
+  <span class="request-pending" role="status" data-show="$busy_{{ id|replace('-', '_') }}" style="display:none">Working…</span>
+</form>
+{% endmacro %}
+{% macro submit(label, intent='save', style='primary') %}<button class="btn btn-{{ style }}" type="submit" name="intent" value="{{ intent }}">{{ label }}</button>{% endmacro %}
+{% macro input(name, label, value='', type='text', required=true) %}<label class="form-group">{{ label }}<input class="input" name="{{ name }}" type="{{ type }}" value="{{ value }}" {% if required %}required{% endif %}></label>{% endmacro %}
+{% macro search(page, section, tab, placeholder='Search…') %}
+<form class="ui-search" method="get" action="{{ path|default('/') }}" data-on:submit="@get('/ui/section/{{ page }}/{{ section }}', {contentType: 'form'})">
+  <input type="hidden" name="tab" value="{{ tab }}"><input class="input" name="q" value="{{ query }}" placeholder="{{ placeholder }}" aria-label="{{ placeholder }}">
+  <button type="submit" class="btn btn-secondary">Search</button>
+</form>
+{% endmacro %}
+{% macro feedback() %}{% if error %}<p class="rules-error" role="alert">{{ error }}</p>{% endif %}{% if notice %}<p class="ui-notice" role="status">{{ notice }}</p>{% endif %}{% endmacro %}
+{% macro copy(value) %}<button type="button" class="copyable copy-button mono-cell" data-copy="{{ value }}" title="Copy">{{ value }}</button>{% endmacro %}

@@ -1,0 +1,48 @@
+[package]
+name = "api"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[features]
+default = ["feat-json-api", "feat-web-ui"]
+# External JSON API under /api/v1/*.
+feat-json-api = []
+# Server-rendered dashboard: pages, /ui/* actions and static assets.
+feat-web-ui = ["dep:minijinja", "dep:serde_urlencoded", "dep:percent-encoding"]
+feat-scoring = ["dep:scoring"]
+
+[dependencies]
+axum = { workspace = true }
+arc-swap = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tower-http = { workspace = true, features = ["fs"] }
+tokio = { workspace = true }
+tokio-stream = { workspace = true }
+tracing = { workspace = true }
+core_dns = { path = "../core" }
+filter = { path = "../filter" }
+logger = { path = "../logger" }
+scoring = { path = "../scoring", optional = true }
+rusqlite = { workspace = true }
+chrono = { workspace = true }
+rule_types = { path = "../rule_types" }
+percent-encoding = { version = "2.3.2", optional = true }
+hickory-proto.workspace = true
+regex = { workspace = true }
+bcrypt = { workspace = true }
+sha2 = "0.10"
+getrandom = "0.3"
+ipnet = { workspace = true }
+minijinja = { version = "2", features = ["json"], optional = true }
+serde_urlencoded = { version = "0.7", optional = true }
+
+[dev-dependencies]
+tracing-subscriber = { workspace = true }
+tempfile = "3"
+reqwest = { workspace = true, features = ["json"] }
+
+[[example]]
+name = "web_fixture"
+required-features = ["feat-web-ui"]

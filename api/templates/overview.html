@@ -1,0 +1,23 @@
+<section id="section-overview-stats" class="ui-section" data-refresh-url="/ui/section/overview/stats?window={{ window }}" data-on-interval__duration.15s="!document.hidden &amp;&amp; @get(el.dataset.refreshUrl)">
+<nav class="tab-nav" aria-label="Statistics time window">{% for key,label in [('24h','24h'),('7d','7 days'),('all','All Retained History')] %}<a class="tab-pill {% if window == key %}active{% endif %}" href="/?window={{ key }}" {% if window == key %}aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}</nav>
+<div class="stat-grid">
+{% for label,count,kind in [('Total Queries',stats.total_queries,'total'),('Blocked Queries',stats.blocked_queries,'blocked'),('Allowed Queries',stats.total_queries - stats.blocked_queries,'allowed')] %}<article class="stat-card stat-card-{{ kind }}"><h2 class="card-title">{{ label }}</h2><strong class="stat-value">{{ count|number }}</strong></article>{% endfor %}
+<article class="stat-card stat-card-rate"><h2 class="card-title">Block Rate</h2><strong class="stat-value">{{ rate }}%</strong></article>
+</div>
+<div class="card chart-card">
+  <div class="card-heading"><h2 class="card-title">Queries Over Time <span class="card-heading-detail">({{ window }}, UTC)</span></h2><div class="chart-legend" id="traffic-chart-legend"><span><i class="chart-swatch" aria-hidden="true"></i>Total queries</span><span><i class="chart-swatch chart-swatch-blocked" aria-hidden="true"></i>Blocked queries</span></div></div>
+  <svg class="ui-chart" viewBox="0 0 800 230" role="img" aria-label="Total and blocked queries over time" aria-describedby="traffic-chart-legend">
+    <g class="chart-grid"><path d="M40 20H780M40 65H780M40 110H780M40 155H780M40 200H780"/></g>
+    <polyline class="chart-total-line" points="{{ total_points }}" fill="none" stroke-width="2.5"/>
+    <polyline class="chart-blocked-line" points="{{ blocked_points }}" fill="none" stroke-width="2"/>
+    {% for point in timeline %}<circle class="chart-total-dot" cx="{{ point.x }}" cy="{{ point.y }}" r="2"><title>{{ point.label }}: {{ point.total }} total / {{ point.blocked }} blocked</title></circle>{% endfor %}
+  </svg>
+</div>
+<div class="ui-card-grid overview-breakdown-grid">
+{% for title, bars,kind in [('Top Blocked Domains',domain_bars,'blocked'),('Top Active Clients',client_bars,'clients'),('Query Types',type_bars,'types'),('Upstream Resolvers',upstream_bars,'upstreams')] %}
+<article class="card rank-card-{{ kind }}"><h2 class="card-title">{{ title }}</h2><ol class="rank-list" aria-label="{{ title }}">
+{% for bar in bars %}<li class="rank-item"><div class="rank-label"><span class="mono-cell">{{ bar.label }}</span><span class="rank-count">{{ bar.count|number }}</span></div><div class="rank-track" aria-hidden="true"><span class="rank-bar" style="width: {{ bar.width }}%"></span></div></li>{% else %}<li class="rank-empty">No query data in this time window.</li>{% endfor %}
+</ol></article>
+{% endfor %}
+</div>
+</section>

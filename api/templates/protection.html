@@ -1,0 +1,10 @@
+<div id="protection-status" data-on-interval__duration.5s="@get('/ui/protection')">
+  {% if error %}<p class="rules-error" role="alert">{{ error }}</p>{% endif %}
+  <details class="ui-protection" data-preserve-attr="open"><summary class="sidebar-protection-card {% if status %}status-paused{% else %}status-active{% endif %}"><span class="status-text-wrap">{% if status %}Protection Paused{% else %}Protection Active{% endif %}</span><span class="sidebar-status-dot" aria-hidden="true"></span></summary>
+    <form method="post" action="/ui/action/shell/protection" data-on:submit="@post(el.action, {contentType:'form', retry:'never'})">
+      <input type="hidden" name="scope" value="global"><input type="hidden" name="intent" value="{% if status %}resume{% else %}pause{% endif %}">
+      {% if not status %}<label>Pause for<select name="seconds" class="input"><option value="300">5 minutes</option><option value="900">15 minutes</option><option value="3600">1 hour</option><option value="0">Until resumed</option></select></label>{% endif %}
+      <button type="submit" class="btn btn-secondary">{% if status %}Resume Protection{% else %}Pause Protection{% endif %}</button>
+    </form>
+  </details>
+</div>
