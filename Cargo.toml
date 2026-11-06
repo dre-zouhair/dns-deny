@@ -1,5 +1,5 @@
 [workspace]
-members = ["rule_types", "filter", "ingest", "logger"]
+members = ["rule_types", "filter", "ingest", "logger", "scoring"]
 resolver = "2"
 
 [workspace.package]
