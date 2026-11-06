@@ -1,0 +1,7 @@
+# Configure these local/fixture names on your resolver before using this corpus.
+# Repeat a row to weight it more heavily.
+nas.home.arpa A
+nas.home.arpa A
+nas.home.arpa AAAA
+blocked.example.test A
+missing.example.test A

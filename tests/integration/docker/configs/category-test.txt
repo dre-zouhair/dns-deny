@@ -1,0 +1,9 @@
+# Deterministic, local blocklist fixture for the protection-pause suite.
+# Deliberately separate from blocklist-test.txt: its domain must NOT be
+# blocked via blocklist_urls (always active, un-pausable) -- it's only
+# blocked when a test dynamically enables a blocklist_categories entry
+# pointing at this file, so pausing/resuming that category is observable.
+#
+# The Go mock has a positive A answer for resolves-fine.test, so removing
+# this category is distinguishable from an ordinary upstream NXDOMAIN.
+0.0.0.0 resolves-fine.test

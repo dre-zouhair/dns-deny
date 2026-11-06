@@ -1,0 +1,56 @@
+# The Go harness substitutes the mock's literal IP before startup. All source
+# imports are local fixtures; unsigned mock replies require DNSSEC disabled.
+# The dedicated rate-limit container uses this 100-query window; the ordinary
+# shared container raises it so correctness traffic does not trigger throttling.
+# A three-second pause default makes expiry observable without a long sleep.
+
+bind_address = "0.0.0.0"
+dnssec_validation = false
+
+ratelimit_qps_per_worker = 100
+ratelimit_window_duration_secs = 1
+ratelimit_max_ips = 100000
+
+cache_l1_max_entries = 100000
+cache_l2_max_size_mb = 64
+cache_negative_ttl_floor_secs = 60
+
+blocklist_urls = ["file:///etc/dns-deny/blocklist-test.txt"]
+
+auto_block_upstream_sinkholes = true
+smart_ip_blocking = true
+device_blocking_enabled = true
+
+local_dns_records = []
+client_aliases = []
+blocked_services = []
+custom_services = []
+device_policies = {}
+device_schedules = []
+
+protection_pause_default_duration_secs = 3
+
+ml_scoring_enabled = false
+enforce_safesearch = false
+recursive_resolver_enabled = false
+encrypted_upstream_enabled = false
+
+logging_enabled = true
+logging_db_path = "logs.db"
+logging_channel_capacity = 100000
+logging_retention_days = 90
+
+api_enabled = true
+api_bind_address = "0.0.0.0"
+api_allow_insecure_http = true # isolated Docker test network
+api_port = 8080
+api_key = "test-integration-api-key-do-not-use"
+api_ratelimit_qps = 1000
+
+[[upstreams]]
+address = "__MOCK_UPSTREAM_IP__"
+protocol = "udp"
+
+[[auto_block_upstreams]]
+address = "__MOCK_UPSTREAM_IP__"
+protocol = "udp"
