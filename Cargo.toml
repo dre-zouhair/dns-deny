@@ -1,5 +1,5 @@
 [workspace]
-members = []
+members = ["rule_types"]
 resolver = "2"
 
 [workspace.package]
