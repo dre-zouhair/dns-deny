@@ -1,0 +1,142 @@
+# Raspberry Pi Zero Configuration for DNS Deny
+# Optimized for 512 MB RAM and single-core ARMv6 CPU.
+# See docs/PI_ZERO_FEASIBILITY.md for details.
+
+# Server Bind Address (0.0.0.0 for all interfaces)
+bind_address = "0.0.0.0"
+
+# Trusted DNS clients. An explicit empty list allows all clients (unsafe on a
+# public listener); omitted values use the private/loopback defaults.
+allowed_client_cidrs = [
+    "127.0.0.0/8",
+    "::1/128",
+    "10.0.0.0/8",
+    "172.16.0.0/12",
+    "192.168.0.0/16",
+    "100.64.0.0/10",
+    "fc00::/7",
+    "fe80::/10",
+]
+
+# DNSSEC Validation flag (disabled to conserve single-core CPU)
+dnssec_validation = false
+
+# Local DNS Records (e.g. internal router, NAS, or homelab overrides)
+local_dns_records = []
+
+# Network Enforcement Features
+enforce_safesearch = false
+smart_ip_blocking = false
+auto_block_upstream_sinkholes = false
+device_blocking_enabled = true
+ml_scoring_enabled = false
+
+# Default duration (seconds) for a temporary protection pause (48 hours)
+protection_pause_default_duration_secs = 172800
+
+# Encrypted DoH Upstream Client Settings
+encrypted_upstream_enabled = false
+encrypted_upstream_allow_plaintext_fallback = false
+encrypted_upstream_url = "https://cloudflare-dns.com/dns-query"
+doh_upstreams = [
+    "https://cloudflare-dns.com/dns-query",
+    "https://dns.google/dns-query",
+    "https://dns.quad9.net/dns-query",
+    "https://dns.adguard-dns.com/dns-query",
+    "https://doh.mullvad.net/dns-query",
+]
+
+# Rate Limit Configuration (Global per-client limit)
+ratelimit_qps_per_worker = 1000
+ratelimit_window_duration_secs = 1
+ratelimit_max_ips = 1000
+
+# High-Performance Memory Cache Configuration (Trimmed for 512 MB RAM)
+cache_l1_max_entries = 5000
+cache_l2_max_size_mb = 16
+cache_negative_ttl_fallback_secs = 60
+
+# Logging & Retention Configuration (Trimmed to reduce SD card wear and memory)
+logging_enabled = true
+logging_db_path = "logs.db"
+logging_channel_capacity = 5000
+logging_retention_days = 7
+
+# Admin REST API & Web Dashboard Configuration
+api_enabled = true
+api_bind_address = "0.0.0.0"
+api_port = 8080
+# Allow HTTP by default; set false to require a trusted HTTPS reverse proxy.
+api_allow_insecure_http = true
+api_trusted_proxy_cidrs = ["127.0.0.1/32", "::1/128"]
+# Admin password, also accepted by the JSON API until an api_token is set.
+# Read when the state database is first created.
+api_key = "my-secure-dashboard-key-123"
+# Optional JSON API token (16+ characters). Once set, only it authenticates
+# /api/v1/*. Stored as a SHA-256 digest.
+# api_token = "replace-with-a-long-random-token"
+api_ratelimit_qps = 20
+
+# Primary Default Blocklist Sources
+# StevenBlack unified hosts (~72,000 entries) provides a solid base without exceeding memory.
+# Keep download and parser peak memory low on the Pi Zero.
+blocklist_fetch_concurrency = 1
+
+blocklist_urls = [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts"
+]
+
+# Categorized Blocklist Subscriptions (Curated lightweight lists)
+[[blocklist_categories]]
+id = "ads"
+name = "Advertising & Trackers"
+urls = [
+    "https://adaway.org/hosts.txt"
+]
+enabled = true
+
+[[blocklist_categories]]
+id = "malware"
+name = "Malware & Phishing"
+urls = [
+    "https://raw.githubusercontent.com/Spam404/Lists/master/main-blacklist.txt"
+]
+enabled = true
+
+[[blocklist_categories]]
+id = "crypto"
+name = "Cryptomining & Fraud"
+urls = [
+    "https://raw.githubusercontent.com/hoshsadiq/adblock-nocoin-list/master/hosts.txt",
+    "https://v.firebog.net/hosts/Prigent-Crypto.txt"
+]
+enabled = true
+
+[[blocklist_categories]]
+id = "adult-gambling"
+name = "Adult & Gambling (Combined Alternate)"
+urls = [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling-porn/hosts"
+]
+enabled = false
+
+# Primary Upstream DNS Resolvers (DNS-over-TLS)
+[[upstreams]]
+address = "1.1.1.1"
+protocol = "dot"
+tls_sni = "cloudflare-dns.com"
+
+[[upstreams]]
+address = "1.0.0.1"
+protocol = "dot"
+tls_sni = "cloudflare-dns.com"
+
+[[upstreams]]
+address = "9.9.9.9"
+protocol = "dot"
+tls_sni = "dns.quad9.net"
+
+[[upstreams]]
+address = "149.112.112.112"
+protocol = "dot"
+tls_sni = "dns.quad9.net"

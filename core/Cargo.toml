@@ -1,0 +1,41 @@
+[package]
+name = "core_dns"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+
+[features]
+feat-scoring = ["dep:scoring"]
+
+[dependencies]
+futures-util = "0.3"
+async-trait = { workspace = true }
+hickory-server = { workspace = true }
+hickory-proto = { workspace = true }
+hickory-resolver = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+serde = { workspace = true }
+toml = { workspace = true }
+socket2 = { workspace = true }
+libc = "0.2"
+dashmap = { workspace = true }
+arc-swap = { workspace = true }
+moka = { workspace = true }
+ahash = { workspace = true }
+filter = { path = "../filter" }
+ingest = { path = "../ingest" }
+reqwest = { workspace = true }
+tokio-cron-scheduler = { workspace = true }
+logger = { path = "../logger" }
+chrono = { workspace = true }
+regex = { workspace = true }
+ipnet = { workspace = true }
+getrandom = "0.3"
+sha2 = "0.10"
+rusqlite = { workspace = true }
+scoring = { path = "../scoring", optional = true }
+
+[dev-dependencies]
+tempfile = "3"

@@ -1,0 +1,88 @@
+dnssec_validation = true
+ratelimit_qps_per_worker = 1000
+ratelimit_window_duration_secs = 1
+ratelimit_max_ips = 100000
+cache_l1_max_entries = 50000
+cache_l2_max_size_mb = 256
+cache_negative_ttl_floor_secs = 60
+blocklist_urls = [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+    "https://raw.githubusercontent.com/JackCuthbert/pihole-twitter/main/pihole-twitter.txt",
+]
+auto_block_upstream_sinkholes = true
+smart_ip_blocking = false
+device_blocking_enabled = false
+device_schedules = []
+local_dns_records = []
+client_aliases = []
+blocked_services = []
+enforce_safesearch = false
+recursive_resolver_enabled = false
+encrypted_upstream_enabled = false
+encrypted_upstream_url = "https://cloudflare-dns.com/dns-query"
+doh_upstreams = [
+    "https://cloudflare-dns.com/dns-query",
+    "https://dns.google/dns-query",
+    "https://dns.quad9.net/dns-query",
+]
+logging_enabled = true
+logging_db_path = "logs.db"
+logging_channel_capacity = 100000
+logging_retention_days = 90
+api_enabled = true
+api_allow_insecure_http = true
+api_port = 8080
+api_key = "my-secure-dashboard-key-123"
+api_ratelimit_qps = 10
+
+[[upstreams]]
+address = "1.1.1.1"
+protocol = "dot"
+tls_sni = "cloudflare-dns.com"
+
+[[upstreams]]
+address = "1.0.0.1"
+protocol = "dot"
+tls_sni = "cloudflare-dns.com"
+
+[[blocklist_categories]]
+id = "ads"
+name = "Advertising & Tracking"
+urls = [
+    "https://adaway.org/hosts.txt",
+    "https://v.firebog.net/hosts/AdguardDNS.txt",
+]
+enabled = false
+
+[[blocklist_categories]]
+id = "malware"
+name = "Malware & Security"
+urls = [
+    "https://v.firebog.net/hosts/Shalla-mal.txt",
+    "https://raw.githubusercontent.com/Spam404/Lists/master/main-blacklist.txt",
+]
+enabled = false
+
+[[blocklist_categories]]
+id = "gambling"
+name = "Gambling & Betting"
+urls = ["https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling/hosts"]
+enabled = false
+
+[[blocklist_categories]]
+id = "social"
+name = "Social Media Distractions"
+urls = ["https://raw.githubusercontent.com/JackCuthbert/pihole-twitter/main/pihole-twitter.txt"]
+enabled = false
+
+[[auto_block_upstreams]]
+address = "1.1.1.2"
+protocol = "dot"
+tls_sni = "security.cloudflare-dns.com"
+
+[[auto_block_upstreams]]
+address = "1.0.0.2"
+protocol = "dot"
+tls_sni = "security.cloudflare-dns.com"
+
+[device_policies]

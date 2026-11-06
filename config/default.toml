@@ -1,0 +1,188 @@
+# Server Bind Address (0.0.0.0 for all interfaces)
+bind_address = "0.0.0.0"
+
+# Trusted DNS clients. An explicit empty list allows all clients (unsafe on a
+# public listener); omitted values use the private/loopback defaults.
+allowed_client_cidrs = [
+    "127.0.0.0/8",
+    "::1/128",
+    "10.0.0.0/8",
+    "172.16.0.0/12",
+    "192.168.0.0/16",
+    "100.64.0.0/10",
+    "fc00::/7",
+    "fe80::/10",
+]
+
+# DNSSEC Validation flag
+dnssec_validation = true
+
+# Local DNS Records (e.g. internal router, NAS, or homelab overrides)
+local_dns_records = []
+
+# Network Enforcement Features
+enforce_safesearch = false
+smart_ip_blocking = false
+auto_block_upstream_sinkholes = true
+device_blocking_enabled = true
+ml_scoring_enabled = false
+
+# Default duration (seconds) for a temporary protection pause (48 hours) --
+# applies to the global pause-all switch and to per-category/per-service/per-device
+# pauses started via /api/v1/protection/pause.
+protection_pause_default_duration_secs = 172800
+
+# Encrypted DoH Upstream Client Settings
+encrypted_upstream_enabled = false
+encrypted_upstream_allow_plaintext_fallback = false
+encrypted_upstream_url = "https://cloudflare-dns.com/dns-query"
+doh_upstreams = [
+    "https://cloudflare-dns.com/dns-query",
+    "https://dns.google/dns-query",
+    "https://dns.quad9.net/dns-query",
+    "https://dns.adguard-dns.com/dns-query",
+    "https://doh.mullvad.net/dns-query",
+]
+
+# Rate Limit Configuration (Global per-client limit; field name is legacy)
+ratelimit_qps_per_worker = 1000
+ratelimit_window_duration_secs = 1
+ratelimit_max_ips = 100000
+
+# High-Performance Memory Cache Configuration
+cache_l1_max_entries = 100000
+cache_l2_max_size_mb = 256
+cache_negative_ttl_fallback_secs = 60
+
+# Logging & Retention Configuration
+logging_enabled = true
+logging_db_path = "logs.db"
+logging_channel_capacity = 100000
+logging_retention_days = 90
+
+# Admin REST API & Web Dashboard Configuration
+api_enabled = true
+api_bind_address = "0.0.0.0"
+api_port = 8080
+# Allow HTTP by default; set false to require a trusted HTTPS reverse proxy.
+api_allow_insecure_http = true
+api_trusted_proxy_cidrs = ["127.0.0.1/32", "::1/128"]
+# Admin password, also accepted by the JSON API until an api_token is set.
+# Read when the state database is first created.
+api_key = "my-secure-dashboard-key-123"
+# Optional JSON API token (16+ characters). Once set, only it authenticates
+# /api/v1/*. Stored as a SHA-256 digest.
+# api_token = "replace-with-a-long-random-token"
+api_ratelimit_qps = 20
+
+# Primary Default Blocklist Sources (Unified Ads, Malware, and Phishing)
+blocklist_urls = [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts",
+    "https://v.firebog.net/hosts/AdguardDNS.txt",
+    "https://someonewhocares.org/hosts/zero/hosts",
+    "https://urlhaus.abuse.ch/downloads/hostfile/"
+]
+
+# Categorized Blocklist Subscriptions
+[[blocklist_categories]]
+id = "ads"
+name = "Advertising & Trackers"
+urls = [
+    "https://adaway.org/hosts.txt",
+    "https://v.firebog.net/hosts/AdguardDNS.txt",
+    "https://v.firebog.net/hosts/Easyprivacy.txt",
+    "https://v.firebog.net/hosts/Easylist.txt",
+    "https://raw.githubusercontent.com/crazy-max/WindowsSpyBlocker/master/data/hosts/spy.txt",
+    "https://hostfiles.frogeye.org/firstparty-trackers-hosts.txt"
+]
+enabled = true
+
+[[blocklist_categories]]
+id = "malware"
+name = "Malware, Phishing & Botnets"
+urls = [
+    "https://v.firebog.net/hosts/RPiList-Phishing.txt",
+    "https://v.firebog.net/hosts/RPiList-Malware.txt",
+    "https://urlhaus.abuse.ch/downloads/hostfile/",
+    "https://raw.githubusercontent.com/Spam404/Lists/master/main-blacklist.txt",
+    "https://phishing.army/download/phishing_army_blocklist_extended.txt",
+    "https://raw.githubusercontent.com/DandelionSprout/adfilt/master/Alternate%20versions%20Anti-Malware%20List/AntiMalwareHosts.txt"
+]
+enabled = true
+
+[[blocklist_categories]]
+id = "crypto"
+name = "Cryptomining & Fraud"
+urls = [
+    "https://raw.githubusercontent.com/hoshsadiq/adblock-nocoin-list/master/hosts.txt",
+    "https://v.firebog.net/hosts/Prigent-Crypto.txt"
+]
+enabled = true
+
+[[blocklist_categories]]
+id = "gambling"
+name = "Gambling & Betting"
+urls = [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/gambling/hosts"
+]
+enabled = true
+
+[[blocklist_categories]]
+id = "adult"
+name = "Adult & Pornography"
+urls = [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn/hosts"
+]
+enabled = true
+
+[[blocklist_categories]]
+id = "fakenews"
+name = "Fake News & Misinformation"
+urls = [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/fakenews/hosts"
+]
+enabled = true
+
+[[blocklist_categories]]
+id = "social"
+name = "Social Media Distractions"
+urls = [
+    "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/social/hosts",
+    "https://raw.githubusercontent.com/JackCuthbert/pihole-twitter/main/pihole-twitter.txt",
+    "https://raw.githubusercontent.com/gieljnssns/Social-media-Blocklists/master/pihole-facebook.txt",
+    "https://raw.githubusercontent.com/gieljnssns/Social-media-Blocklists/master/pihole-instagram.txt",
+    "https://raw.githubusercontent.com/gieljnssns/Social-media-Blocklists/master/pihole-tiktok.txt"
+]
+enabled = true
+
+# Primary Upstream DNS Resolvers (DNS-over-TLS)
+[[upstreams]]
+address = "1.1.1.1"
+protocol = "dot"
+tls_sni = "cloudflare-dns.com"
+
+[[upstreams]]
+address = "1.0.0.1"
+protocol = "dot"
+tls_sni = "cloudflare-dns.com"
+
+[[upstreams]]
+address = "9.9.9.9"
+protocol = "dot"
+tls_sni = "dns.quad9.net"
+
+[[upstreams]]
+address = "149.112.112.112"
+protocol = "dot"
+tls_sni = "dns.quad9.net"
+
+# Auto-Block Discovery Upstreams (Threat & Malicious IP Detection)
+[[auto_block_upstreams]]
+address = "1.1.1.2"
+protocol = "dot"
+tls_sni = "security.cloudflare-dns.com"
+
+[[auto_block_upstreams]]
+address = "1.0.0.2"
+protocol = "dot"
+tls_sni = "security.cloudflare-dns.com"
