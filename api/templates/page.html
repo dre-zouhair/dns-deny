@@ -42,7 +42,9 @@
       <header class="page-header"><div><h1>{{ title }}</h1><p class="page-description">{{ description }}</p></div></header>
       <div id="ui-error" class="rules-error" role="alert" hidden></div>
       {% if tabs %}<nav class="tab-nav" aria-label="Page sections">{% for key, label in tabs %}<a class="tab-pill {% if tab == key %}active{% endif %}" href="{{ path }}?tab={{ key }}" {% if tab == key %}aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}</nav>{% endif %}
-      {% for item in sections %}{{ overrides[item.name]|default(item.html)|safe }}{% endfor %}
+      <div class="page-sections {% if page == 'lists' and tab in ['allowdeny','regex'] %}page-sections-paired{% endif %}">
+        {% for item in sections %}{{ overrides[item.name]|default(item.html)|safe }}{% endfor %}
+      </div>
     </div>
   </main>
 </div>

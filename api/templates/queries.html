@@ -1,6 +1,7 @@
 {% import 'forms.html' as f with context %}
 <section id="section-queries-feed" class="ui-section" data-stream-url="{{ stream_url }}" data-signals="{live: {{ 'true' if mode == 'live' else 'false' }}, stream_status: 'connecting…', stream_tick: 0}">
 {{ f.feedback() }}
+<div class="card query-controls-card">
 <div class="ui-form-row">
   {% if mode != 'history' %}
   <span role="status" data-text="$live ? $stream_status : 'paused'">{% if mode == 'live' %}Connecting…{% else %}Paused{% endif %}</span>
@@ -20,6 +21,7 @@
 </form>
 <p id="query-warning" class="settings-note"></p>
 {% if mode == 'history' %}<p>{{ count }} queries on page {{ page_number }}.</p>{% else %}<p data-text="($stream_tick, document.getElementById('query-rows').childElementCount) + ' displayed (maximum 500)'">0 displayed (maximum 500)</p>{% endif %}
+</div>
 <div class="card query-log-card"><div class="query-log-scroll" tabindex="0" role="region" aria-label="DNS query log; scroll horizontally to see all columns"><div class="query-log-table">
 <div class="tail-row tail-header"><span>Time (UTC)</span><span>Client</span><span>Domain</span><span>Type</span><span>Verdict</span><span>Latency</span></div>
 <div id="query-rows" class="tail-feed" data-ignore>{{ rows|safe }}</div>

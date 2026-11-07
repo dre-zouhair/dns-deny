@@ -5,18 +5,18 @@
 <div class="card"><h2 class="card-title">{{ title }} ({{ total }})</h2>
 {{ f.search('lists', section, 'regex' if 'regex' in section else 'allowdeny', 'Search rules…') }}
 {% call f.form('add-' ~ section, 'lists', section, true) %}<div class="ui-form-row">{{ f.input('pattern', 'New pattern', form.pattern|default('')) }}{{ f.submit('Add Rule', 'add') }}</div>{% endcall %}
-<div class="table-container"><table class="table"><thead><tr><th>Pattern</th><th>Action</th></tr></thead><tbody>
-{% for pattern in entries %}<tr><td>{{ f.copy(pattern) }}</td><td>{% call f.form('delete-' ~ section ~ '-' ~ loop.index, 'lists', section, false, 'Delete this rule?') %}<input name="pattern" type="hidden" value="{{ pattern }}">{{ f.submit('Delete', 'delete', 'ghost') }}{% endcall %}</td></tr>{% else %}<tr><td class="rules-empty" colspan="2">{% if total %}No matches{% else %}No entries yet{% endif %}</td></tr>{% endfor %}
+<div class="table-container"><table class="table"><thead><tr><th>Pattern</th><th class="table-actions">Action</th></tr></thead><tbody>
+{% for pattern in entries %}<tr><td>{{ f.copy(pattern) }}</td><td class="table-actions">{% call f.form('delete-' ~ section ~ '-' ~ loop.index, 'lists', section, false, 'Delete this rule?') %}<input name="pattern" type="hidden" value="{{ pattern }}">{{ f.submit('Delete', 'delete', 'ghost') }}{% endcall %}</td></tr>{% else %}<tr><td class="rules-empty" colspan="2">{% if total %}No matches{% else %}No entries yet{% endif %}</td></tr>{% endfor %}
 </tbody></table></div></div>
 {% elif section == 'remote' %}
 <div class="card"><h2 class="card-title">Categorized Subscriptions</h2><div class="ui-card-grid">
-{% for category in summary.categories %}<article class="card"><strong>{{ category.name }}</strong><p>{{ category.rule_count|number }} rules across {{ category.url_count }} sources</p><span class="badge {% if category.paused %}badge-warning{% elif category.enabled %}badge-success{% else %}badge-danger{% endif %}">{% if category.paused %}Paused{% elif category.enabled %}Enabled{% else %}Disabled{% endif %}</span>
-{% call f.form('category-' ~ loop.index, 'lists', 'remote') %}<input type="hidden" name="id" value="{{ category.id }}"><label><input name="enabled" type="checkbox" {% if category.enabled %}checked{% endif %}> Enabled</label>{{ f.submit('Apply', 'toggle', 'secondary') }}{% endcall %}
+{% for category in summary.categories %}<article class="card"><div class="card-heading-row"><strong>{{ category.name }}</strong><span class="badge {% if category.paused %}badge-warning{% elif category.enabled %}badge-success{% else %}badge-danger{% endif %}">{% if category.paused %}Paused{% elif category.enabled %}Enabled{% else %}Disabled{% endif %}</span></div><p>{{ category.rule_count|number }} rules across {{ category.url_count }} sources</p>
+<div class="card-actions">{% call f.form('category-' ~ loop.index, 'lists', 'remote') %}<input type="hidden" name="id" value="{{ category.id }}">{% if not category.enabled %}<input type="hidden" name="enabled" value="on">{% endif %}{{ f.submit('Disable' if category.enabled else 'Enable', 'toggle', 'secondary') }}{% endcall %}
 {% if category.enabled or category.paused %}{% call f.form('category-pause-' ~ loop.index, 'lists', 'remote') %}<input type="hidden" name="id" value="{{ category.id }}"><input type="hidden" name="scope" value="category">{{ f.submit('Resume' if category.paused else 'Pause', 'resume' if category.paused else 'pause', 'ghost') }}{% endcall %}{% endif %}
-</article>{% else %}<p>No blocklist categories defined.</p>{% endfor %}</div></div>
-<div class="card"><h2 class="card-title">Remote Blocklist Sources</h2>
-{% call f.form('source-sync', 'lists', 'remote') %}{{ f.submit('Sync All Sources', 'sync') }}{% endcall %}
-{% for url in sources %}<div class="ui-form-row">{{ f.copy(url) }}{% call f.form('source-delete-' ~ loop.index, 'lists', 'remote', false, 'Remove this source?') %}<input type="hidden" name="url" value="{{ url }}">{{ f.submit('Delete', 'delete', 'ghost') }}{% endcall %}</div>{% else %}<p>No custom sources configured.</p>{% endfor %}
+</div></article>{% else %}<p>No blocklist categories defined.</p>{% endfor %}</div></div>
+<div class="card"><div class="card-heading-row"><h2 class="card-title">Remote Blocklist Sources</h2>
+{% call f.form('source-sync', 'lists', 'remote') %}{{ f.submit('Sync All Sources', 'sync') }}{% endcall %}</div>
+{% for url in sources %}<div class="source-row">{{ f.copy(url) }}{% call f.form('source-delete-' ~ loop.index, 'lists', 'remote', false, 'Remove this source?') %}<input type="hidden" name="url" value="{{ url }}">{{ f.submit('Delete', 'delete', 'ghost') }}{% endcall %}</div>{% else %}<p>No custom sources configured.</p>{% endfor %}
 {% call f.form('source-add', 'lists', 'remote', true) %}<div class="ui-form-row">{{ f.input('url', 'Source URL', form.url|default('') if form_id == 'source-add' else '', 'url') }}{{ f.submit('Add Source', 'add') }}</div>{% endcall %}
 </div>
 {% else %}
