@@ -68,100 +68,42 @@
 
 [data-theme="light"] {
   color-scheme: light;
-  --color-bg: #f5f7f0;
-  --color-surface: #ffffff;
-  --color-surface-2: #e8eee2;
-  --color-surface-dim: #f8faf5;
-  --color-surface-hover: #e8eee2;
-  --color-border: #d2ddca;
-  --color-border-subtle: #e6ecdf;
-  --color-border-hover: #b8c8ad;
-  --color-control-border: #b8c8ad;
-  --accent-rgb: 71, 113, 77;
-  --success-rgb: 52, 112, 73;
-  --danger-rgb: 180, 76, 53;
-  --warning-rgb: 155, 112, 36;
-  --color-accent: #4f7954;
-  --color-accent-hover: #3f6848;
-  --color-accent-muted: #e0edc2;
-  --color-accent-glow: rgb(79 121 84 / 18%);
-  --color-accent-text: #214b39;
-  --color-on-accent: #ffffff;
-  --color-success: #347049;
-  --color-success-muted: #e7f0e6;
-  --color-danger: #b44c35;
-  --color-danger-hover: #963e2c;
-  --color-danger-muted: #f8e9e4;
+  --color-bg: hsl(220, 20%, 97%);
+  --color-surface: hsl(0, 0%, 100%);
+  --color-surface-2: hsl(220, 15%, 93%);
+  --color-surface-dim: hsl(220, 15%, 96%);
+  --color-surface-hover: hsl(220, 15%, 89%);
+  --color-border: hsl(220, 14%, 85%);
+  --color-border-subtle: hsl(220, 14%, 90%);
+  --color-border-hover: hsl(220, 16%, 75%);
+  --color-control-border: #8290a4;
+  --accent-rgb: 8, 145, 178;
+  --success-rgb: 5, 128, 84;
+  --danger-rgb: 207, 23, 55;
+  --warning-rgb: 148, 96, 0;
+  --color-accent: hsl(186, 90%, 38%);
+  --color-accent-hover: hsl(186, 90%, 32%);
+  --color-accent-muted: rgba(8, 145, 178, 0.12);
+  --color-accent-glow: rgba(8, 145, 178, 0.3);
+  --color-on-accent: #0b0e14;
+  --color-danger: #cf1737;
+  --color-danger-hover: #b3112d;
+  --color-danger-muted: rgba(225, 29, 72, 0.1);
   --color-on-danger: #ffffff;
-  --color-warning: #9b7024;
-  --color-warning-muted: #f5efdf;
-  --color-chart-total: #347a5a;
-  --color-chart-blocked: #c95135;
-  --color-text: #203d33;
-  --color-text-subtle: #526b57;
-  --color-text-muted: #687b67;
+  --color-success: #058054;
+  --color-success-muted: rgba(5, 150, 105, 0.1);
+  --color-warning: #946000;
+  --color-warning-muted: rgba(217, 119, 6, 0.1);
+  --color-chart-total: var(--color-accent);
+  --color-chart-blocked: var(--color-danger);
+  --color-text: hsl(222, 25%, 12%);
+  --color-text-subtle: hsl(222, 18%, 30%);
+  --color-text-muted: hsl(220, 14%, 42%);
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.04);
   --shadow-md: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 6px -1px rgb(0 0 0 / 0.04);
   --shadow-lg: 0 12px 28px -4px rgb(0 0 0 / 0.1), 0 6px 12px -2px rgb(0 0 0 / 0.05);
-}
-
-[data-theme="light"] .sidebar {
-  background: #183f34;
-  border-right-color: #315649;
-}
-
-[data-theme="light"] .sidebar .sidebar-brand,
-[data-theme="light"] .sidebar .sidebar-link {
-  color: #c8d6c8;
-}
-
-[data-theme="light"] .sidebar .sidebar-brand-icon {
-  color: #dce9ad;
-  border-color: #62806a;
-  background: #234f40;
-}
-
-[data-theme="light"] .sidebar .sidebar-link.active {
-  color: #214532;
-  background: #dcebb8;
-  border-color: #dcebb8;
-}
-
-[data-theme="light"] .sidebar .sidebar-link.active svg {
-  stroke: currentColor;
-}
-
-[data-theme="light"] .sidebar .sidebar-link:hover:not(.active) {
-  color: #ffffff;
-  background: #285242;
-}
-
-[data-theme="light"] .sidebar-header,
-[data-theme="light"] .sidebar-footer {
-  border-color: #315649;
-}
-
-[data-theme="light"] .sidebar-footer .btn {
-  color: #c8d6c8;
-}
-
-[data-theme="light"] .sidebar-footer #logout-btn {
-  color: #e59a7d !important;
-}
-
-[data-theme="light"] .stat-card-rate {
-  background: #e7ece4;
-  border-color: #aebda5;
-}
-
-[data-theme="light"] .sidebar .ui-protection label,
-[data-theme="light"] .sidebar-header .btn {
-  color: #c8d6c8;
-}
-
-[data-theme="light"] .sidebar .ui-protection form {
-  padding-inline: 4px;
+  --color-accent-text: #006573;
 }
 
 /* ── 2. Base Reset ───────────────────────────────────────────────────────── */
@@ -1824,9 +1766,6 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; flex-sh
 .ui-days label { display: inline-flex; align-items: center; gap: 6px; }
 .ui-startup dd { min-width: 0; overflow-wrap: anywhere; }
 .request-pending { align-self: center; }
-[data-theme="light"] .sidebar .ui-protection label,
-[data-theme="light"] .sidebar-header .btn { color: #c8d6c8; }
-[data-theme="light"] .sidebar .ui-protection form { padding-inline: 4px; }
 @media (max-width: 700px) {
   .source-row, .domain-result-row { padding: 10px; }
   .ui-form-row .btn { max-width: 100%; white-space: normal; }
