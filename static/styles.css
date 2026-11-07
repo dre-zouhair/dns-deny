@@ -1695,6 +1695,7 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; flex-sh
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
+.page-title-group { min-width: 0; }
 .mobile-menu-label { margin-left: 10px; color: var(--color-text-muted); font-size: 11px; font-weight: 400; }
 .theme-icon-dark { display: none; }
 [data-theme="light"] .theme-icon-light { display: none; }
@@ -1706,6 +1707,8 @@ input[type="checkbox"], input[type="radio"] { width: 16px; height: 16px; flex-sh
   .input, .form-control { min-height: 44px; font-size: 16px; }
   .btn { min-height: 42px; }
   .mobile-menu .sidebar-link { min-height: 44px; }
+  .card-header { flex-wrap: wrap; gap: 10px; }
+  .grid-2col { grid-template-columns: minmax(0, 1fr); }
 }
 .query-log-scroll:focus-visible { outline-offset: -3px !important; }
 
